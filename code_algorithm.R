@@ -3,7 +3,10 @@
 #------------
 
 
-
+# Computes the gradient of the objective function
+#
+# x = data as n x p matrix
+# v = the point in R^p where the gradient is evaluated
 eval_grad <- function(x, v){
   n <- nrow(x)
   
@@ -22,7 +25,10 @@ eval_grad <- function(x, v){
   grad_now
 }
 
-
+# Estimates the minimizer using gradient descent
+#
+# x = data as n x p matrix
+# maxiter = maximum number of iterations
 estim_v <- function(x, maxiter = 100){
   
   S <- cov(x)
@@ -57,7 +63,8 @@ estim_v <- function(x, maxiter = 100){
 }
 
 
-
+# Example of running the algorithm
+#
 # n <- 1000
 # x <- matrix(rnorm(n*2), n, 2)
 # x <- sweep(x, 2, c(2, 1), "*")
