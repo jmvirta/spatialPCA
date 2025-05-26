@@ -5,7 +5,7 @@ The manuscript investigates the minimization of the objective function $v \mapst
 
 Preprint available in arXiv (add a link)
 
-All code is in R and requires the packages XXX.
+All code is in R and requires the packages (add here).
 
 The code files are:
 
@@ -13,7 +13,7 @@ The code files are:
 
 ## Authors
 
-Virta J., Radojicic U. and Voutilainen M.
+Virta J., Radojičić U. and Voutilainen M.
 
 ## License
 
