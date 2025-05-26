@@ -9,7 +9,7 @@ All code is in R and requires the packages XXX.
 
 The code files are;
 
-- code_algorithm.R, an implementation of the algorithm described in Section 4 of the manuscript
+- code_algorithm.R, an implementation of the algorithm for computing the mininizer as described in Section 4 of the manuscript
 
 ## Authors
 
@@ -17,4 +17,4 @@ Virta J., Radojicic U. and Voutilainen M.
 
 ## License
 
-GNUGPLv3
+GNU GPLv3
