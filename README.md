@@ -11,6 +11,8 @@ The code files are:
 
 - code_algorithm.R, an implementation of the algorithm for computing the mininizer as described in Section 4 of the manuscript
 
+As proven in Corollary 2 of the manuscript, the algorithm is guaranteed to converge in a finite number of iterations.
+
 ## Authors
 
 Virta J., Radojičić U. and Voutilainen M.
