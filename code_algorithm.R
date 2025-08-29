@@ -170,7 +170,7 @@ estim_v <- function(x, v = NULL, maxiter = 50, maxtol = 10^(-6), lambda_optimize
     
     v1 <- res$v;
     f_evals <- c( f_evals, res$f );
-    tol <- min(sum((v - v1)^2), sum((v + v1)^2));
+    tol <- min(sqrt(sum((v - v1)^2)), sqrt(sum((v + v1)^2)));
     v <- v1;
     iter <- iter + 1;
   }
