@@ -65,7 +65,7 @@ eval_f <- function(x, v) {
 # u = the direction of the point in R^p where the objective function is evaluated
 # lambda = the magnitude of the point in R^p where the objective function is evaluated
 eval_f_lambda <- function(x, u, lambda) {
-  v <- u * lambda
+  v <- u * sqrt(lambda)
   
   # Vectorized subtraction and addition
   x_minus <- sweep(x, 2, v, "-")
@@ -174,7 +174,7 @@ estim_v <- function(x, v = NULL, maxiter = 50, maxtol = 10^(-6), lambda_optimize
     v <- v1;
     iter <- iter + 1;
   }
-  ifelse(lambda_optimize == TRUE, lambda <- optim(sqrt(sum(v^2)), eval_f_lambda, x=x, u = v,  method = "L-BFGS-B")$par, lambda <- 1);
+  ifelse(lambda_optimize == TRUE, lambda <- (optim(sqrt(sum(v^2)), eval_f_lambda, x=x, u = v,  method = "L-BFGS-B")$par)^2, lambda <- 1);
   #v <- lambda*v;
   return(list(v = v, f_evals = f_evals))
 }
