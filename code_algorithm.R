@@ -154,26 +154,28 @@ Tk_iter <- function(x, v) {
 # v = the initial value (p-vector)
 # maxiter = maximal number of iterations before manual termination
 # maxtol = convergence tolerance of the algorithm 
-v_optimize_iterative <- function(x, v = NULL, maxiter = 50, maxtol = 10^(-6)){
+estim_v <- function(x, v = NULL, maxiter = 50, maxtol = 10^(-6), lambda_optimize = FALSE){
   iter <- 0;
   tol <- 1;
   f_evals <- c();
   
   if(is.null(v)){
     v <- eigen(cov(x))$vector[,1];
-    lambda <- optim(1, eval_f_lambda, x=x, u = v,  method = "L-BFGS-B")$par;
-    v <- lambda*v;
+    #lambda <- optim(1, eval_f_lambda, x=x, u = v,  method = "L-BFGS-B")$par;
+    #v <- lambda*v;
   }
   while (iter < maxiter && tol > maxtol) {
-    res <- T_iter( x, v );
+    matching_rows <- apply(x, 1, function(row) all(row == v))
+    ifelse(sum(matching_rows) == 0, res <- T_iter( x, v ), res <- Tk_iter( x, v ));
+    
     v1 <- res$v;
     f_evals <- c( f_evals, res$f );
     tol <- min(sum((v - v1)^2), sum((v + v1)^2));
     v <- v1;
     iter <- iter + 1;
   }
-  lambda <- optim(sqrt(sum(v^2)), eval_f_lambda, x=x, u = v,  method = "L-BFGS-B")$par;
-  v <- lambda*v;
+  ifelse(lambda_optimize == TRUE, lambda <- optim(sqrt(sum(v^2)), eval_f_lambda, x=x, u = v,  method = "L-BFGS-B")$par, lambda <- 1);
+  #v <- lambda*v;
   return(list(v = v, f_evals = f_evals))
 }
 
@@ -190,7 +192,7 @@ v_optimize_iterative <- function(x, v = NULL, maxiter = 50, maxtol = 10^(-6)){
 # v0 <- rnorm(p)
 #
 # system.time({
-# res <- v_optimize_iterative(x)
+# res <- estim_v(x)
 # })
 #
 # plot(res$f_evals, type="o")
@@ -198,4 +200,5 @@ v_optimize_iterative <- function(x, v = NULL, maxiter = 50, maxtol = 10^(-6)){
 #
 # res$v
 # res$v/sqrt(sum(res$v^2))
+
 
