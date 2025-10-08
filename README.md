@@ -3,7 +3,7 @@ This repository contains R-code related to the manuscript "New M-estimator of th
 
 The manuscript investigates the minimization of the objective function $v \mapsto \mathrm{E}\| X - v \| \| X + v \|$ and shows that the minimizers $v_0$ can be interpreted as estimating the direction of the leading principal component of $X$.
 
-Preprint available in arXiv (add a link)
+Preprint available in [arXiv](https://arxiv.org/abs/2510.02799).
 
 All code is in R.
 
