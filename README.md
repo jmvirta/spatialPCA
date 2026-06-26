@@ -11,6 +11,7 @@ The code files are:
 
 - code_algorithm.R, an implementation of the algorithm for computing the mininizer as described in Section 4 of the manuscript
 - code_simulation_1.R, code for running Simulation study #1 in Section 5.1 of the manuscript and for producing the result Figures 2 and 3
+- code_simulation_3.R, code for running the additional experiment in Section 6 and producing the result Figure 5 about estimating PC2 with the method.
 
 As proven in Corollary 2 of the manuscript, the algorithm is guaranteed to converge in a finite number of iterations.
 
