@@ -208,9 +208,11 @@ mean_sd_init_inner_products <- function(vs) {
 
 run_one_simu<-function(x, seed=sample(1:10000000,1), p, n_init=25, normalize=TRUE){
   set.seed(seed); #fix seed within one multiple initialization setting
+  u_pca <- eigen(cov(x))$vectors[,1]
   us<-rnorm(p*n_init); dim(us)<-c(n_init,p); #us is a matrix with initial approximations in rows 
+  us<-rbind(us,u_pca)
   vs<-us; #here collect the solutions;
-  for (i in 1:n_init) {
+  for (i in 1:(n_init+1)) {
     res_rand <- estim_v(x=x, v = us[i,]/norm_2(us[i,]), maxiter = 100)$v
     ifelse(normalize, vs[i,] <- res_rand/norm_2(res_rand), vs[i,] <- res_rand)
   }
@@ -221,7 +223,7 @@ run_one_simu<-function(x, seed=sample(1:10000000,1), p, n_init=25, normalize=TRU
 replicate_simu <- function(n_rep, n, p, lambda, n_init=25, normalize=TRUE, seed=42) {
   seeds <- seed + seq_len(n_rep)
   
-  cl <- parallel::makeCluster(10) #set the number of cores
+  cl <- parallel::makeCluster(100)
   on.exit(parallel::stopCluster(cl))
   
   parallel::clusterExport(cl, c(
@@ -256,16 +258,16 @@ replicate_simu <- function(n_rep, n, p, lambda, n_init=25, normalize=TRUE, seed=
 df <- 5
 
 settings <- expand.grid(
-  lambda = c(5, 10, 25, 40),
+  lambda = c(2, 5, 10, 25, 40),
   n      = c(500, 1000),
-  p      = c(3, 5, 50)
+  p      = c(3, 10, 50)
   # lambda = c(5, 10),
   # n      = c(50, 100),
   # p      = c(3, 5)
 )
 
 all_results <- Map(function(n, p, lambda) {
-  replicate_simu(n_rep=25, n=n, p=p, lambda=lambda, n_init=25, normalize=TRUE, seed=42)
+  replicate_simu(n_rep=100, n=n, p=p, lambda=lambda, n_init=25, normalize=TRUE, seed=42)
 }, settings$n, settings$p, settings$lambda)
 
 settings$grand_mean <- sapply(all_results, `[[`, "grand_mean")
@@ -274,7 +276,7 @@ settings$mean_mu    <- sapply(all_results, `[[`, "mean_mu")
 
 print(settings)
 
-write.table(settings, file="simulation_results.txt", row.names=FALSE, sep="\t", quote=FALSE)
+write.table(settings, file="sensitivity_simulation_results.txt", row.names=FALSE, sep="\t", quote=FALSE)
 
 
 
