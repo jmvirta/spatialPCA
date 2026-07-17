@@ -3,6 +3,11 @@
 #-------------
 
 
+#-----------
+# IMPORTANT: For reproducing Figure 4, skip to line 571
+#----------
+
+
 library(tidyverse)
 
 
@@ -563,6 +568,10 @@ result_100 <- df %>%
 result_all <- rbind(result, result_5, result_10, result_50,result_100)
 write.csv2(result_all, "res_cov.csv")
 
+#------------------------------------------------------------------------#
+#-----------------------Figure 4-----------------------------------------#
+
+
 result_all <- (read.csv2("res_cov.csv"))[,-1]
 result_all$n <- as.factor(result_all$n)
 levels(result_all$n) <- c("n = 500", "n = 1000", "n = 10000")
@@ -570,328 +579,53 @@ levels(result_all$n) <- c("n = 500", "n = 1000", "n = 10000")
 result_all$p <- as.factor(result_all$p)
 levels(result_all$p) <- c("p = 3", "p = 5", "p = 10", "p=50","p=100")
 
-library(ggplot2)
-ggplot(result_all, aes(x = lambda, y = log(cov_2norm), color = method, linetype = as.factor(df))) +
-  geom_line() +
-  facet_grid(p~n) +
-  theme_minimal() +
-  labs(
-    #title = "MSE vs Lambda",
-    x = expression(lambda),
-    y = expression("log || ASCOV ||"[2]),#expression("log||" * Cov(w[n]) * "||"[2]),
-    color = "",
-    linetype = expression(nu)
-  ) + 
-  theme_bw()+
-  theme(legend.position = "bottom")
 
-
-
-############### Auxilliary plot - mean difference ################
-###############
-
-df <- as.data.frame(p3_data)
-
-# Ensure grouping variables are in proper types (e.g., numeric or factor)
-df <- df %>%
-  mutate(
-    n = as.numeric(as.character(n)),
-    lambda = as.numeric(as.character(lambda)),
-    p = as.numeric(as.character(p)),
-    df = as.numeric(as.character(df))
-  )
-
-# Group and calculate
-result <- df %>%
-  group_by(n, lambda, p, df,method) %>%
-  group_modify(~ {
-    # For each group .x, extract the first three columns as numeric vectors
-    mat <- t(sapply(1:nrow(.x), function(i) as.numeric(unlist(.x[i, 2:4]))))
-    mean1 <- sum(mat^2)
-    tibble(mean1 = mean1/n)
-  }) %>%
-  ungroup()
-
-
-df <- as.data.frame(p5_data)
-
-# Ensure grouping variables are in proper types (e.g., numeric or factor)
-df <- df %>%
-  mutate(
-    n = as.numeric(as.character(n)),
-    lambda = as.numeric(as.character(lambda)),
-    p = as.numeric(as.character(p)),
-    df = as.numeric(as.character(df))
-  )
-
-# Group and calculate
-result_5 <- df %>%
-  group_by(n, lambda, p, df,method) %>%
-  group_modify(~ {
-    # For each group .x, extract the first three columns as numeric vectors
-    mat <- t(sapply(1:nrow(.x), function(i) as.numeric(unlist(.x[i, 2:6]))))
-    mean1 <- sum(mat^2)
-    tibble(mean1 = mean1/n)
-  }) %>%
-  ungroup()
-
-df <- as.data.frame(p10_data)
-
-# Ensure grouping variables are in proper types (e.g., numeric or factor)
-df <- df %>%
-  mutate(
-    n = as.numeric(as.character(n)),
-    lambda = as.numeric(as.character(lambda)),
-    p = as.numeric(as.character(p)),
-    df = as.numeric(as.character(df))
-  )
-
-# Group and calculate
-result_10 <- df %>%
-  group_by(n, lambda, p, df,method) %>%
-  group_modify(~ {
-    # For each group .x, extract the first three columns as numeric vectors
-    mat <- t(sapply(1:nrow(.x), function(i) as.numeric(unlist(.x[i, 2:11]))))
-    mean1 <- sum(mat^2)
-    tibble(mean1 = mean1/n)
-  }) %>%
-  ungroup()
-
-
-df <- as.data.frame(p50_data)
-
-# Ensure grouping variables are in proper types (e.g., numeric or factor)
-df <- df %>%
-  mutate(
-    n = as.numeric(as.character(n)),
-    lambda = as.numeric(as.character(lambda)),
-    p = as.numeric(as.character(p)),
-    df = as.numeric(as.character(df))
-  )
-
-# Group and calculate
-result_50 <- df %>%
-  group_by(n, lambda, p, df,method) %>%
-  group_modify(~ {
-    # For each group .x, extract the first three columns as numeric vectors
-    mat <- t(sapply(1:nrow(.x), function(i) as.numeric(unlist(.x[i, 2:4]))))
-    mean1 <- sum(mat^2)
-    tibble(mean1 = mean1/n)
-  }) %>%
-  ungroup()
-
-
-
-df <- as.data.frame(p100_data)
-
-# Ensure grouping variables are in proper types (e.g., numeric or factor)
-df <- df %>%
-  mutate(
-    n = as.numeric(as.character(n)),
-    lambda = as.numeric(as.character(lambda)),
-    p = as.numeric(as.character(p)),
-    df = as.numeric(as.character(df))
-  )
-
-# Group and calculate
-result_100 <- df %>%
-  group_by(n, lambda, p, df,method) %>%
-  group_modify(~ {
-    # For each group .x, extract the first three columns as numeric vectors
-    mat <- t(sapply(1:nrow(.x), function(i) as.numeric(unlist(.x[i, 2:4]))))
-    mean1 <- sum(mat^2)
-    tibble(mean1 = mean1/n)
-  }) %>%
-  ungroup()
-
-
-
-
-result_mean <- rbind(result, result_5, result_10, result_50,result_100)
-write.csv2(result_mean, "res_mean.csv")
-
-result_mean <- (read.csv2("res_mean.csv"))[,-1]
-
-result_mean$n <- as.factor(result_mean$n)
-levels(result_mean$n) <- c("n = 500", "n = 1000", "n = 10000")
-
-result_all$p <- as.factor(result_mean$p)
-levels(result_all$p) <- c("p = 3", "p = 5", "p = 10", "p=50","p=100")
-
-library(ggplot2)
-ggplot(result_mean, aes(x = lambda, y = log(mean1), color = method, linetype = as.factor(df))) +
-  geom_line() +
-  facet_grid(n~p,scales="fixed") +
-  theme_minimal() +
-  labs(
-    #title = "MSE vs Lambda",
-    x = expression(lambda),
-    y = expression( "log( Mean ||"~w[n]^2~"||)" ),
-    color = "",
-    linetype = expression(nu)
-  ) + 
-  theme_bw()+
-  theme(legend.position = "bottom")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###-------------New plot--------------------------###
-
-spatial_simu_asym <- function(n=1000,p=5,lambda=20,df=3,seed=set.seed()){
-  
-  x <- mvtnorm::rmvt(n = n, sigma = diag(c(lambda, rep(1,p-1) ) ), df = df );
-  res <- estim_v(x, v=c(1,0,0), maxiter = 100)
-  
-  #mean(sqrt(apply((x-matrix(rep(res$v,n),byrow=T,ncol=3) )^2,1,sum))/sqrt(apply((x+matrix(rep(res$v,n),byrow=T,ncol=3))^2,1,sum)))
-  
-  
-  #x <- sweep(x, 1, c(2, 1), "*")
-  
-  #res <- estim_v(x, maxiter = 100)
-  #res
-  
-  v <- res$v
-  
-  #Sigma_eigens <- eigen(cov(x))$values
-  #sigma1 <- Sigma_eigens[1]
-  #sigma2 <- Sigma_eigens[2]
-  
-  sigma1 <- (sigma*4)^2;
-  sigma2 <- sigma^2;
-  
-  psi <- norm(res$v,"2")
-  
-  o1 <- c(1,rep(0,p-1))
-  o2 <- c(0,1,rep(0,p-2))
-  
-  v_matrix <- matrix(rep(psi*o1,n),nrow=n,byrow=TRUE )
-  
-  x_minus <- -1 * (x-v_matrix)
-  x_plus <- x+v_matrix
-  
-  y_minus <- apply(x_minus,1,norm_2)
-  y_plus <- apply(x_plus,1,norm_2)
-  
-  
-  ##Hessian part
-  
-  a1 <- mean( y_minus/y_plus+y_plus/y_minus )
-  
-  a2 <- mean( y_plus / y_minus^3 * (tcrossprod(o1, x_minus) )^2 )
-  
-  a3 <- mean( y_minus / y_plus^3 * (tcrossprod(o1, x_plus) )^2 )
-  
-  a4 <- mean( 1 / (y_minus * y_plus ) * tcrossprod(o1, x_plus) * tcrossprod(o1, x_minus) )
-  
-  
-  b1 <- a1
-  
-  b2 <- mean( y_plus / y_minus^3 * (tcrossprod(o2, x_minus) )^2 )
-  
-  b3 <- mean( y_minus / y_plus^3 * (tcrossprod(o2, x_plus) )^2 )
-  
-  b4 <- mean( 1 / (y_minus * y_plus ) * tcrossprod(o2, x_plus) * tcrossprod(o2, x_minus) )
-  
-  a_hessian <- (a1 - ( a2 + a3 ) + 2*a4)
-  b_hessian <- (b1 - ( b2 + b3 ) + 2*b4)
-  
-  
-  ## Gradient part
-  
-  
-  c11 <- mean( y_plus^2 / y_minus^2 * (tcrossprod(o1, x_minus) )^2 )
-  c12 <- mean( y_minus^2 / y_plus^2 * (tcrossprod(o1, x_plus) )^2 )
-  
-  c1 <- ( c11 + c12 )
-  
-  d11 <- mean( y_plus^2 / y_minus^2 * (tcrossprod(o2, x_minus) )^2 )
-  d12 <- mean( y_minus^2 / y_plus^2 * (tcrossprod(o2, x_plus) )^2 )
-  
-  d1 <- ( d11 + d12 )
-  
-  c_grad <- c1 + 2*psi^2 - 2*sigma1
-  d_grad <- d1 - 2*sigma2
-  
-  c <- c_grad / a_hessian^2
-  d <- d_grad / b_hessian^2
-  
-  limit_covariance <- c * tcrossprod(o1,o1) + d * ( diag(p) - tcrossprod(o1,o1))
-  
-  limit_covariance_unit_v <-  d / psi^2 * ( diag(p) - tcrossprod(o1,o1))
-  
-  return(d/psi^2)
+# ---- Identifiability threshold from Lemma 2.5 ------------------------------
+## phi_1(S_P) = tau(lambda, p) = (lambda^2 / 2) * int_0^inf (1 + lambda^2 x)^(-3/2) (1 + x)^((1-p)/2) dx
+## PC1 is identifiable iff tau(lambda, p) > 1/2  (Theorem 2.4).
+tau <- function(lambda, p) {
+  integrand <- function(x) (1 + x)^(-3 / 2) * (1 + x / lambda^2)^((1 - p) / 2)
+  1 / 2 * integrate(integrand, 0, Inf)$value
 }
 
-pca_simu_asym <- function(n=1000,p=5,lambda=20,df=3,seed=set.seed()){
-  z <- mvtnorm::rmvt(n = n, sigma = diag(p), df = df );
-  x <- z %*% diag(c(sqrt(lambda), rep(1,p-1) ) )
-  z1 <- z[,1]
-  z2 <- z[,2]
-  
-  const1 <- mean(z1^2*z2^2)/(mean(z1^2))^2*lambda/(lambda-1)^2
-  
-  return(const1)
-}
+## For every (lambda, p) in the data, estimate tau, then take the smallest
+## lambda on the grid whose tau is >= 1/2 as the threshold for that p.
+lambdas <- seq(1,40,0.01)
+ps      <- c(3,5,10,50,100)
+ths    <- c()
 
-ps <- c(3,5,10)
-lambdas <- seq(2,40)
-ns <- c(500, 1000, 50000)
-dfs <- c(3, 5, 10)
-
-pca_res <- matrix(ncol=6,nrow=3*3*3*length(lambdas));
-pca_res <- as.data.frame(pca_res)
-names(pca_res) <- c("SPCA","PCA","n","p","df","lambda")
-
-i <- 0;
-
-for (df in dfs) {
+for (p in ps) {
   for (lambda in lambdas) {
-    for (n in ns) {
-      for (p in ps) {
-        i <- i+1;
-        pca_temp <- pca_simu_asym(n=n,df=df,p=p,lambda=lambda)
-        spca_temp <- spatial_simu_asym(n=n,df=df,p=p,lambda=lambda)
-        
-        pca_res[i,] <- c(spca_temp,pca_temp,n,p,df,lambda)
+    temp <- tau(lambda,p);
+    if(temp>=0.5){
+      ths<-c(ths,lambda);
+      break;
       }
-    }
   }
+  
 }
+thr_df <- data.frame(cbind(p=ps, xintercept=ths))
+## ---- Match factor labels used in the plot ---------------------------------
+p_levels <- c("p = 3", "p = 5", "p = 10", "p=50", "p=100")
 
-pca_res_final <- cbind(const=c(pca_res$SPCA,pca_res$PCA),method=rep(c("SPCA","PCA"),each=dim(pca_res)[1]), rbind(pca_res[,-c(1:2)],pca_res[,-c(1:2)]))
-write.csv2(pca_res_final,"Constant_simu_res.csv")
+thr_df$p <- factor(thr_df$p, levels = ps, labels = p_levels)
 
-pca_res_final <- read.csv2("Constant_simu_res.csv")
-
-
-
-ggplot(pca_res_final[pca_res_final$lambda>5,], aes(x = lambda, y = log(const), color = method, linetype = as.factor(df))) +
+## ---- Plot ------------------------------------------------------------------
+ggplot(result_all, aes(x = lambda, y = (log(cov_2norm)),
+                       color = method, linetype = as.factor(df))) +
+  geom_vline(data = thr_df, aes(xintercept = (xintercept))
+             , color = "grey40", linewidth = 0.4) +
   geom_line() +
-  facet_grid(p~n,   scales = "free") +
-  theme_minimal() +
+  facet_grid(p ~ n, scales = "free") +
   labs(
-    #title = "MSE vs Lambda",
     x = expression(lambda),
-    y = expression("log||" * Cov(w[n]) * "||"[2]),
+    y = expression("log || ASCOV ||"[2]),
     color = "",
     linetype = expression(nu)
-  ) + 
-  theme_bw()+
+  ) +
+  theme_bw() +
   theme(legend.position = "bottom")
+
 
 
 
